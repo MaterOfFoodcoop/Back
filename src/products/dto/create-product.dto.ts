@@ -6,18 +6,18 @@ import {
   IsBoolean,
 } from 'class-validator';
 
-export class CreateProductDto {
-  @IsNotEmpty()
+class ProductInfo {
+  @IsOptional()
   @IsString()
   productName: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   productDetail: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
-  price: number;
+  productPrice: number;
 
   @IsOptional()
   @IsBoolean()
@@ -26,4 +26,9 @@ export class CreateProductDto {
   @IsOptional()
   @IsString()
   imgUrl: string;
+}
+
+export class CreateProductDto {
+  @IsNotEmpty()
+  productInfo: ProductInfo;
 }

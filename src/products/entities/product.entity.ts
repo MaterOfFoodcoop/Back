@@ -11,15 +11,15 @@ export class Product {
   @Column({ length: 1000 })
   productDetail: string;
 
-  @Column()
-  price: number;
+  @Column({ type: 'decimal' })
+  productPrice: number;
 
-  @Column({ default: true })
+  @Column({ default: false })
   isInStock: boolean;
 
   @Column({ default: 0 })
   like: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: '기본 이미지 URL' })
   imgUrl: string;
 }
