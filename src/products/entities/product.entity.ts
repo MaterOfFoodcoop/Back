@@ -8,6 +8,9 @@ export class Product {
   @Column()
   productName: string;
 
+  @Column()
+  category: string;
+
   @Column({ length: 1000 })
   productDetail: string;
 
@@ -23,3 +26,7 @@ export class Product {
   @Column({ nullable: true, default: '기본 이미지 URL' })
   imgUrl: string;
 }
+
+// enum ProductCategoty {
+
+// }
