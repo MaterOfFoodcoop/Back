@@ -27,7 +27,18 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.productsService.remove(+id);
+  }
+
+  /**좋아요 */
+  @Post(':id/like')
+  async addLike(@Param('id') id: number) {
+    return this.productsService.addLike(id);
+  }
+
+  @Delete(':id/like')
+  async removeLike(@Param('id') id: number) {
+    return this.productsService.removeLike(id);
   }
 }

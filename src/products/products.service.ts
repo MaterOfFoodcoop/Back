@@ -74,4 +74,23 @@ export class ProductsService {
     }
     await this.productsRepository.delete(productId);
   }
+
+  /**좋아요 */
+  // 일단 이렇게만 해둠;; 유저 로그인이 필요가 없긴 한데.. 대화가 필요할 듯
+  async addLike(productId: number): Promise<Product> {
+    const product = await this.productsRepository.findOne({
+      where: { productId: productId },
+    });
+    product.like++;
+    const updatedProduct = await this.productsRepository.save(product);
+    return updatedProduct;
+  }
+  async removeLike(productId: number): Promise<Product> {
+    const product = await this.productsRepository.findOne({
+      where: { productId: productId },
+    });
+    product.like--;
+    const updatedProduct = await this.productsRepository.save(product);
+    return updatedProduct;
+  }
 }
