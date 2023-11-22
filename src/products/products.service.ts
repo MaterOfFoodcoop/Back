@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -19,6 +19,7 @@ export class ProductsService {
     product.productPrice = productInfo.productPrice;
     product.isInStock = productInfo.isInStock;
     product.imgUrl = productInfo.imgUrl;
+    product.category = productInfo.category;
     return await this.productsRepository.save(product);
   }
 
@@ -31,12 +32,23 @@ export class ProductsService {
         'isInStock',
         'like',
         'imgUrl',
+        'category',
       ],
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(productId: number): Promise<Product> {
+    const product = await this.productsRepository.findOne({
+      where: { productId: productId },
+    });
+
+    if (!product) {
+      throw new NotFoundException(
+        `해당 #${productId}를 가진 상품이 존재하지 않습니다.`,
+      );
+    }
+
+    return product;
   }
 
   // async update(

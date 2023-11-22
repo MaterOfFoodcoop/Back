@@ -1,5 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
+export enum ProductCategory {
+  Chip = '과자',
+  Beverage = '음료',
+  IceCream = '아이스크림',
+  ProcessedFood = '가공식품',
+  Etc = '기타',
+}
+
 @Entity()
 export class Product {
   @PrimaryGeneratedColumn()
@@ -7,6 +15,9 @@ export class Product {
 
   @Column()
   productName: string;
+
+  @Column({ default: ProductCategory.Etc })
+  category: ProductCategory;
 
   @Column({ length: 1000 })
   productDetail: string;

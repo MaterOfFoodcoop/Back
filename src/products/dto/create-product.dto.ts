@@ -4,12 +4,18 @@ import {
   IsNumber,
   IsOptional,
   IsBoolean,
+  IsEnum,
 } from 'class-validator';
+import { ProductCategory } from '../entities/product.entity';
 
 class ProductInfo {
   @IsOptional()
   @IsString()
   productName: string;
+
+  @IsOptional()
+  @IsEnum(ProductCategory)
+  category: ProductCategory;
 
   @IsOptional()
   @IsString()
