@@ -44,7 +44,7 @@ export class ProductsService {
 
     if (!product) {
       throw new NotFoundException(
-        `해당 #${productId}를 가진 상품이 존재하지 않습니다.`,
+        `해당 id-${productId} 를 가진 상품이 존재하지 않습니다.`,
       );
     }
 
@@ -63,7 +63,15 @@ export class ProductsService {
   //   return await this.productsRepository.save(product);
   // }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} product`;
-  // }
+  async remove(productId: number): Promise<void> {
+    const product = await this.productsRepository.findOne({
+      where: { productId: productId },
+    });
+    if (!product) {
+      throw new NotFoundException(
+        `해당 id-${productId} 를 가진 상품이 존재하지 않습니다.`,
+      );
+    }
+    await this.productsRepository.delete(productId);
+  }
 }
