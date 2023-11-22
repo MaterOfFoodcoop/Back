@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { ProductsModule } from './products/products.module';
+import { QnAModule } from './qna/qna.module';
 
 // ThrottlerModule.forRoot([
 //   {
@@ -13,7 +14,7 @@ import { ProductsModule } from './products/products.module';
 // ]),
 
 @Module({
-  imports: [DatabaseModule, ProductsModule],
+  imports: [DatabaseModule, ProductsModule, QnAModule],
   controllers: [AppController],
   providers: [AppService],
 })

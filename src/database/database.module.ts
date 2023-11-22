@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from 'src/products/entities/product.entity';
+import { Question } from 'src/qna/entities/question.entity';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { Product } from 'src/products/entities/product.entity';
         username: configService.get<string>('DATABASE_NAME'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_DB'),
-        entities: [Product],
+        entities: [Product, Question],
         synchronize: true,
       }),
       inject: [ConfigService],
