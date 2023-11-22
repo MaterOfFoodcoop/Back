@@ -19,6 +19,7 @@ export class ProductsService {
     product.productPrice = productInfo.productPrice;
     product.isInStock = productInfo.isInStock;
     product.imgUrl = productInfo.imgUrl;
+    product.category = productInfo.category;
     return await this.productsRepository.save(product);
   }
 
@@ -31,6 +32,7 @@ export class ProductsService {
         'isInStock',
         'like',
         'imgUrl',
+        'category',
       ],
     });
   }
