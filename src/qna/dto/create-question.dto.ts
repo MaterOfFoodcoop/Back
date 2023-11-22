@@ -1,16 +1,11 @@
 import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
-class QuestionInfo {
-  @IsOptional()
-  @IsString()
-  productName: string;
-
-  @IsOptional()
-  @IsString()
-  productDetail: string;
-}
-
 export class CreateQuestionDto {
+  @IsString()
   @IsNotEmpty()
-  productInfo: QuestionInfo;
+  title: string;
+
+  @IsOptional()
+  @IsString()
+  content: string;
 }
