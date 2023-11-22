@@ -44,7 +44,7 @@ export class ProductsService {
 
     if (!product) {
       throw new NotFoundException(
-        `해당 id-${productId} 를 가진 상품이 존재하지 않습니다.`,
+        `해당 id(${productId}) 를 가진 상품이 존재하지 않습니다.`,
       );
     }
 
@@ -64,14 +64,7 @@ export class ProductsService {
   // }
 
   async remove(productId: number): Promise<void> {
-    const product = await this.productsRepository.findOne({
-      where: { productId: productId },
-    });
-    if (!product) {
-      throw new NotFoundException(
-        `해당 id-${productId} 를 가진 상품이 존재하지 않습니다.`,
-      );
-    }
+    await this.findOne(productId);
     await this.productsRepository.delete(productId);
   }
 
@@ -94,17 +87,13 @@ export class ProductsService {
   /**좋아요 */
   // 일단 이렇게만 해둠;; 유저 로그인이 필요가 없긴 한데.. 대화가 필요할 듯
   async addLike(productId: number): Promise<Product> {
-    const product = await this.productsRepository.findOne({
-      where: { productId: productId },
-    });
+    const product = await this.findOne(productId);
     product.like++;
     const updatedProduct = await this.productsRepository.save(product);
     return updatedProduct;
   }
   async removeLike(productId: number): Promise<Product> {
-    const product = await this.productsRepository.findOne({
-      where: { productId: productId },
-    });
+    const product = await this.findOne(productId);
     product.like--;
     const updatedProduct = await this.productsRepository.save(product);
     return updatedProduct;
