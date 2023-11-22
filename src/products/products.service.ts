@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -44,7 +44,7 @@ export class ProductsService {
 
     if (!product) {
       throw new NotFoundException(
-        `해당 id-${productId} 를 가진 상품이 존재하지 않습니다.`,
+        `해당 id(${productId}) 를 가진 상품이 존재하지 않습니다.`,
       );
     }
 
@@ -64,31 +64,36 @@ export class ProductsService {
   // }
 
   async remove(productId: number): Promise<void> {
-    const product = await this.productsRepository.findOne({
-      where: { productId: productId },
+    await this.findOne(productId);
+    await this.productsRepository.delete(productId);
+  }
+
+  // 검색
+  async search(keyword: string): Promise<Product[]> {
+    const products = await this.productsRepository.find({
+      where: {
+        productName: Like(`%${keyword}%`),
+      },
     });
-    if (!product) {
+
+    if (products.length === 0) {
       throw new NotFoundException(
-        `해당 id-${productId} 를 가진 상품이 존재하지 않습니다.`,
+        `'${keyword}'에 해당하는 상품을 찾을 수 없습니다.`,
       );
     }
-    await this.productsRepository.delete(productId);
+    return products;
   }
 
   /**좋아요 */
   // 일단 이렇게만 해둠;; 유저 로그인이 필요가 없긴 한데.. 대화가 필요할 듯
   async addLike(productId: number): Promise<Product> {
-    const product = await this.productsRepository.findOne({
-      where: { productId: productId },
-    });
+    const product = await this.findOne(productId);
     product.like++;
     const updatedProduct = await this.productsRepository.save(product);
     return updatedProduct;
   }
   async removeLike(productId: number): Promise<Product> {
-    const product = await this.productsRepository.findOne({
-      where: { productId: productId },
-    });
+    const product = await this.findOne(productId);
     product.like--;
     const updatedProduct = await this.productsRepository.save(product);
     return updatedProduct;
