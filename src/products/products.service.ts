@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -73,6 +73,22 @@ export class ProductsService {
       );
     }
     await this.productsRepository.delete(productId);
+  }
+
+  // 검색
+  async search(keyword: string): Promise<Product[]> {
+    const products = await this.productsRepository.find({
+      where: {
+        productName: Like(`%${keyword}%`),
+      },
+    });
+
+    if (products.length === 0) {
+      throw new NotFoundException(
+        `'${keyword}'에 해당하는 상품을 찾을 수 없습니다.`,
+      );
+    }
+    return products;
   }
 
   /**좋아요 */
