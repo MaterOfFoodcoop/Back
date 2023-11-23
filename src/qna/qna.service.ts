@@ -28,20 +28,20 @@ export class QnaService {
     const question = await this.questionRepository.findOne({
       where: { id: createAnswerDto.questionId },
     });
-
     if (!question) {
       throw new NotFoundException(
         `해당 id(${createAnswerDto.questionId}) 를 가진 질문이 존재하지 않습니다.`,
       );
     }
-
     const answer = this.answerRepository.create({
       content: createAnswerDto.content,
       question,
     });
-
     await this.answerRepository.save(answer);
-
     return answer;
+  }
+
+  async findAll(): Promise<Question[]> {
+    return await this.questionRepository.find({ relations: ['answer'] });
   }
 }

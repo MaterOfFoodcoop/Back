@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { QnaService } from './qna.service';
 import { CreateAnswerDto } from './dto/create-answer.dto';
@@ -15,5 +15,10 @@ export class QnAController {
   @Post('answer')
   async createAnswer(@Body() createAnswerDto: CreateAnswerDto) {
     return await this.qnaService.createAnswer(createAnswerDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.qnaService.findAll();
   }
 }
