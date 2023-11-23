@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Answer } from './answer.entity';
 
 @Entity()
 export class Question {
@@ -13,4 +14,7 @@ export class Question {
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  @OneToOne(() => Answer, (answer) => answer.question)
+  answer: Answer;
 }
