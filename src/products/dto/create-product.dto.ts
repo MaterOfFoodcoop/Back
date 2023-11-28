@@ -30,8 +30,7 @@ class ProductInfo {
   isInStock: boolean;
 
   @IsOptional()
-  @IsString()
-  imgUrl: string;
+  file: Express.Multer.File;
 }
 
 export class CreateProductDto {

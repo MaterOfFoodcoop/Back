@@ -3,6 +3,8 @@ import { Like, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { existsSync, mkdirSync, renameSync } from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class ProductsService {
@@ -18,8 +20,20 @@ export class ProductsService {
     product.productDetail = productInfo.productDetail;
     product.productPrice = productInfo.productPrice;
     product.isInStock = productInfo.isInStock;
-    product.imgUrl = productInfo.imgUrl;
     product.category = productInfo.category;
+
+    // 파일 처리
+    const file = productInfo.file;
+    if (file) {
+      const uploadDir = './uploads';
+      if (!existsSync(uploadDir)) {
+        mkdirSync(uploadDir);
+      }
+      const newFilePath = join(uploadDir, file.originalname);
+      renameSync(file.path, newFilePath);
+      console.log(newFilePath);
+      product.imgUrl = newFilePath;
+    }
     return await this.productsRepository.save(product);
   }
 
