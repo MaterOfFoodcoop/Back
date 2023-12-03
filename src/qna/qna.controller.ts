@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { QnaService } from './qna.service';
 import { CreateAnswerDto } from './dto/create-answer.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('qna')
 export class QnAController {
@@ -12,6 +13,7 @@ export class QnAController {
     return await this.qnaService.createQuestion(createQuestionDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('answer')
   async createAnswer(@Body() createAnswerDto: CreateAnswerDto) {
     return await this.qnaService.createAnswer(createAnswerDto);
