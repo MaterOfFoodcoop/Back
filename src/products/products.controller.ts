@@ -7,15 +7,12 @@ import {
   Delete,
   Query,
   UseGuards,
-  StreamableFile,
-  NotFoundException,
-  HttpStatus,
+  Res,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { join } from 'path';
-import { createReadStream, existsSync } from 'fs';
+import { Response } from 'express';
 
 @Controller('products')
 export class ProductsController {
@@ -27,23 +24,6 @@ export class ProductsController {
     this.productsService.create(createProductDto);
   }
 
-  @Get('download/:filename')
-  async downloadImg(
-    @Param('filename') filename: string,
-  ): Promise<StreamableFile> {
-    const filepath = join(__dirname, '..', '..', 'uploads', filename);
-
-    if (!existsSync(filepath)) {
-      throw new NotFoundException({
-        status: HttpStatus.NOT_FOUND,
-        message: 'File not found',
-      });
-    }
-
-    const file = createReadStream(filepath);
-    return new StreamableFile(file);
-  }
-
   // @UseGuards(AuthGuard('jwt'))
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
@@ -53,6 +33,11 @@ export class ProductsController {
   @Get()
   findAll() {
     return this.productsService.findAll();
+  }
+
+  @Get('images/:imgPath')
+  seeUploadedFile(@Param('imgPath') image, @Res() res: Response) {
+    return res.sendFile(image, { root: './uploads' });
   }
 
   @Get('search')
