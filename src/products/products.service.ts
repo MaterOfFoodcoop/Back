@@ -5,6 +5,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { existsSync, mkdirSync, renameSync } from 'fs';
 import { join } from 'path';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -65,17 +66,14 @@ export class ProductsService {
     return product;
   }
 
-  // async update(
-  //   id: number,
-  //   updateProductDto: UpdateProductDto,
-  // ): Promise<Product> {
-  //   const product = await this.productsRepository.findOne(id);
-  //   if (!product) {
-  //     throw new Error(`Product with ID ${id} not found`);
-  //   }
-  //   Object.assign(product, updateProductDto);
-  //   return await this.productsRepository.save(product);
-  // }
+  async update(
+    id: number,
+    updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
+    const product = await this.findOne(id);
+    Object.assign(product, updateProductDto);
+    return await this.productsRepository.save(product);
+  }
 
   async remove(productId: number): Promise<void> {
     await this.findOne(productId);
