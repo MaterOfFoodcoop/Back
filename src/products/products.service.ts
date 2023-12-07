@@ -3,9 +3,13 @@ import { Like, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { existsSync, mkdirSync, renameSync } from 'fs';
-import { join } from 'path';
 import { UpdateProductDto } from './dto/update-product.dto';
+import * as AWS from 'aws-sdk';
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+});
 
 @Injectable()
 export class ProductsService {
@@ -23,7 +27,37 @@ export class ProductsService {
     product.isInStock = productInfo.isInStock;
     product.category = productInfo.category;
 
-    // 파일 처리
+    if (productInfo.file) {
+      const uploadParams = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Body: productInfo.file.buffer,
+        Key: `image/main/${Date.now().toString()}-${
+          productInfo.file.originalname
+        }`,
+        ACL: 'public-read',
+      };
+
+      try {
+        const data = await s3.upload(uploadParams).promise();
+        product.imgUrl = data.Location;
+      } catch (err) {
+        console.log('Error', err);
+      }
+    }
+
+    return await this.productsRepository.save(product);
+  }
+
+  /*
+  async create(createProductDto: CreateProductDto): Promise<Product> {
+    const product = new Product();
+    const productInfo = createProductDto.productInfo;
+    product.productName = productInfo.productName;
+    product.productDetail = productInfo.productDetail;
+    product.productPrice = productInfo.productPrice;
+    product.isInStock = productInfo.isInStock;
+    product.category = productInfo.category;
+
     const file = productInfo.file;
     if (file) {
       const uploadDir = './uploads';
@@ -37,6 +71,7 @@ export class ProductsService {
     }
     return await this.productsRepository.save(product);
   }
+  */
 
   async findAll(): Promise<Product[]> {
     return await this.productsRepository.find({

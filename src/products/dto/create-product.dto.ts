@@ -1,5 +1,4 @@
 import {
-  IsNotEmpty,
   IsString,
   IsNumber,
   IsOptional,
@@ -34,6 +33,6 @@ class ProductInfo {
 }
 
 export class CreateProductDto {
-  @IsNotEmpty()
+  @IsOptional()
   productInfo: ProductInfo;
 }
