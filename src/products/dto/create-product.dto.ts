@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { ProductCategory } from '../entities/product.entity';
 
-class ProductInfo {
+export class CreateProductDto {
   @IsOptional()
   @IsString()
   productName: string;
@@ -30,9 +30,4 @@ class ProductInfo {
 
   @IsOptional()
   file: Express.Multer.File;
-}
-
-export class CreateProductDto {
-  @IsOptional()
-  productInfo: ProductInfo;
 }

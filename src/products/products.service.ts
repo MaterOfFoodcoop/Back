@@ -20,19 +20,18 @@ export class ProductsService {
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
     const product = new Product();
-    const productInfo = createProductDto.productInfo;
-    product.productName = productInfo.productName;
-    product.productDetail = productInfo.productDetail;
-    product.productPrice = productInfo.productPrice;
-    product.isInStock = productInfo.isInStock;
-    product.category = productInfo.category;
+    product.productName = createProductDto.productName;
+    product.productDetail = createProductDto.productDetail;
+    product.productPrice = createProductDto.productPrice;
+    product.isInStock = createProductDto.isInStock;
+    product.category = createProductDto.category;
 
-    if (productInfo.file) {
+    if (createProductDto.file) {
       const uploadParams = {
         Bucket: process.env.AWS_BUCKET_NAME,
-        Body: productInfo.file.buffer,
+        Body: createProductDto.file.buffer,
         Key: `image/main/${Date.now().toString()}-${
-          productInfo.file.originalname
+          createProductDto.file.originalname
         }`,
         ACL: 'public-read',
       };
