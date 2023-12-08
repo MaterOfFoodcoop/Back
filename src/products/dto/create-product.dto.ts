@@ -27,7 +27,4 @@ export class CreateProductDto {
   @IsOptional()
   @IsBoolean()
   isInStock: boolean;
-
-  @IsOptional()
-  file: Express.Multer.File;
 }
