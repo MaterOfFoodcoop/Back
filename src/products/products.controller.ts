@@ -9,21 +9,28 @@ import {
   UseGuards,
   Res,
   Patch,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    this.productsService.create(createProductDto);
+  @UseInterceptors(FileInterceptor('file'))
+  async create(
+    @UploadedFile() file,
+    @Body() createProductDto: CreateProductDto,
+  ) {
+    return this.productsService.create(createProductDto, file);
   }
 
   @UseGuards(AuthGuard('jwt'))

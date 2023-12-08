@@ -1,5 +1,4 @@
 import {
-  IsNotEmpty,
   IsString,
   IsNumber,
   IsOptional,
@@ -8,7 +7,7 @@ import {
 } from 'class-validator';
 import { ProductCategory } from '../entities/product.entity';
 
-class ProductInfo {
+export class CreateProductDto {
   @IsOptional()
   @IsString()
   productName: string;
@@ -28,12 +27,4 @@ class ProductInfo {
   @IsOptional()
   @IsBoolean()
   isInStock: boolean;
-
-  @IsOptional()
-  file: Express.Multer.File;
-}
-
-export class CreateProductDto {
-  @IsNotEmpty()
-  productInfo: ProductInfo;
 }

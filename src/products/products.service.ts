@@ -1,41 +1,102 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Like, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { existsSync, mkdirSync, renameSync } from 'fs';
-import { join } from 'path';
 import { UpdateProductDto } from './dto/update-product.dto';
+
+import * as path from 'path';
+import * as AWS from 'aws-sdk';
+
+// const s3 = new AWS.S3({
+//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+// });
 
 @Injectable()
 export class ProductsService {
+  private readonly awsS3: AWS.S3;
+  public readonly S3_BUCKET_NAME: string;
+
   constructor(
     @InjectRepository(Product)
     private productsRepository: Repository<Product>,
-  ) {}
+  ) {
+    this.awsS3 = new AWS.S3({
+      accessKeyId: process.env.AWS_BUCKET_ACCESS_KEY,
+      secretAccessKey: process.env.AWS_BUCKET_SECRET_KEY,
+      region: process.env.S3_REGION,
+    });
+    this.S3_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
+  }
 
-  async create(createProductDto: CreateProductDto): Promise<Product> {
-    const product = new Product();
-    const productInfo = createProductDto.productInfo;
-    product.productName = productInfo.productName;
-    product.productDetail = productInfo.productDetail;
-    product.productPrice = productInfo.productPrice;
-    product.isInStock = productInfo.isInStock;
-    product.category = productInfo.category;
+  async deleteFileFromS3(fileUrl: string): Promise<void> {
+    try {
+      const decodedUrl = decodeURI(fileUrl);
+      const urlParts = decodedUrl.split('/');
+      const key = urlParts.slice(3).join('/');
 
-    // 파일 처리
-    const file = productInfo.file;
-    if (file) {
-      const uploadDir = './uploads';
-      if (!existsSync(uploadDir)) {
-        mkdirSync(uploadDir);
-      }
-      const newFilePath = join(uploadDir, file.originalname);
-      renameSync(file.path, newFilePath);
-      console.log(newFilePath);
-      product.imgUrl = newFilePath;
+      await this.awsS3
+        .deleteObject({
+          Bucket: this.S3_BUCKET_NAME,
+          Key: key,
+        })
+        .promise();
+    } catch (error) {
+      throw new BadRequestException(`File to delete failed : ${error}`);
     }
-    return await this.productsRepository.save(product);
+  }
+
+  async uploadFileToS3(
+    folder: string,
+    file: Express.Multer.File,
+  ): Promise<{
+    // key: string;
+    // s3Object: PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>;
+    // contentType: string;
+    url: string;
+  }> {
+    try {
+      const key = `${folder}/${Date.now()}_${path.basename(
+        file.originalname,
+      )}`.replace(/ /g, '');
+      // 공백을 제거해주는 정규식
+      const s3Object = await this.awsS3
+        .putObject({
+          Bucket: this.S3_BUCKET_NAME,
+          Key: key,
+          Body: file.buffer,
+          // ACL: 'public-read',
+          ContentType: file.mimetype,
+        })
+        .promise();
+      const imgUrl = `https://${this.S3_BUCKET_NAME}.s3.amazonaws.com/${key}`;
+      // return { key, s3Object, contentType: file.mimetype, url: imgUrl };
+      return { url: imgUrl };
+    } catch (error) {
+      throw new BadRequestException(`File upload failed : ${error}`);
+    }
+  }
+
+  async create(
+    createProductDto: CreateProductDto,
+    file: Express.Multer.File,
+  ): Promise<Product> {
+    const product = new Product();
+    product.productName = createProductDto.productName;
+    product.productDetail = createProductDto.productDetail;
+    product.productPrice = createProductDto.productPrice;
+    product.isInStock = createProductDto.isInStock;
+    product.category = createProductDto.category;
+    if (file) {
+      const fileUrl = await this.uploadFileToS3('imgs', file);
+      product.imgUrl = fileUrl.url;
+    }
+    return this.productsRepository.save(product);
   }
 
   async findAll(): Promise<Product[]> {
@@ -76,7 +137,12 @@ export class ProductsService {
   }
 
   async remove(productId: number): Promise<void> {
-    await this.findOne(productId);
+    const product = await this.findOne(productId);
+
+    if (product.imgUrl) {
+      await this.deleteFileFromS3(product.imgUrl);
+    }
+
     await this.productsRepository.delete(productId);
   }
 
