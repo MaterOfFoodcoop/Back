@@ -34,6 +34,23 @@ export class ProductsService {
     this.S3_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
   }
 
+  async deleteFileFromS3(fileUrl: string): Promise<void> {
+    try {
+      const decodedUrl = decodeURI(fileUrl);
+      const urlParts = decodedUrl.split('/');
+      const key = urlParts.slice(3).join('/');
+
+      await this.awsS3
+        .deleteObject({
+          Bucket: this.S3_BUCKET_NAME,
+          Key: key,
+        })
+        .promise();
+    } catch (error) {
+      throw new BadRequestException(`File to delete failed : ${error}`);
+    }
+  }
+
   async uploadFileToS3(
     folder: string,
     file: Express.Multer.File,
@@ -75,9 +92,6 @@ export class ProductsService {
     product.productPrice = createProductDto.productPrice;
     product.isInStock = createProductDto.isInStock;
     product.category = createProductDto.category;
-
-    console.log();
-
     if (file) {
       const fileUrl = await this.uploadFileToS3('imgs', file);
       product.imgUrl = fileUrl.url;
@@ -123,7 +137,12 @@ export class ProductsService {
   }
 
   async remove(productId: number): Promise<void> {
-    await this.findOne(productId);
+    const product = await this.findOne(productId);
+
+    if (product.imgUrl) {
+      await this.deleteFileFromS3(product.imgUrl);
+    }
+
     await this.productsRepository.delete(productId);
   }
 
