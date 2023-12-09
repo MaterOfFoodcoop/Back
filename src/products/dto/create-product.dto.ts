@@ -9,6 +9,7 @@ import { ProductCategory } from '../entities/product.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateProductDto {
+  @ApiProperty({ example: '바나나우유' })
   @IsOptional()
   @IsString()
   productName: string;
