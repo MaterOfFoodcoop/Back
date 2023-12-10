@@ -85,7 +85,9 @@ export class ProductsService {
     product.productName = createProductDto.productName;
     product.productDetail = createProductDto.productDetail;
     product.productPrice = createProductDto.productPrice;
-    product.isInStock = createProductDto.isInStock;
+    //아니 form데이타 인식도 못하냐;;
+    product.isInStock = createProductDto.isInStock === 'true';
+    // product.isInStock = createProductDto.isInStock;
     product.category = createProductDto.category;
     if (file) {
       const fileUrl = await this.uploadFileToS3('imgs', file);

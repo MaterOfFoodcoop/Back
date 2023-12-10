@@ -2,7 +2,7 @@ import {
   IsString,
   IsNumber,
   IsOptional,
-  IsBoolean,
+  // IsBoolean,
   IsEnum,
 } from 'class-validator';
 import { ProductCategory } from '../entities/product.entity';
@@ -28,8 +28,13 @@ export class CreateProductDto {
   @IsNumber()
   productPrice: number;
 
-  @ApiProperty({ example: false })
+  @ApiProperty({ example: 1 })
   @IsOptional()
-  @IsBoolean()
-  isInStock: boolean;
+  @IsString()
+  isInStock: string;
+
+  // @ApiProperty({ example: false })
+  // @IsOptional()
+  // @IsBoolean()
+  // isInStock: boolean;
 }
