@@ -12,7 +12,7 @@ import { JwtStrategy } from './jwt/jwt.strategy';
     // jwt 생성할 때 사용할 시크릿 키와 만료일자 적어주기
     JwtModule.register({
       secret: 'secret',
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '100h' },
     }),
   ],
   providers: [AuthService, JwtStrategy],
