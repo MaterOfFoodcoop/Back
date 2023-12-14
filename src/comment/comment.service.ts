@@ -4,6 +4,7 @@ import { Comment } from './entities/comment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/products/entities/product.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { ApiBody, ApiOperation } from '@nestjs/swagger';
 
 @Injectable()
 export class CommentService {
@@ -27,6 +28,11 @@ export class CommentService {
     return product;
   }
 
+  @ApiOperation({
+    summary: '댓글 API',
+    description: 'QNA에 질문을 작성한다.',
+  })
+  @ApiBody({ type: CreateCommentDto })
   async createComment(createCommentDto: CreateCommentDto) {
     const { content, productId } = createCommentDto;
     const product = await this.findOne(productId);
@@ -43,10 +49,10 @@ export class CommentService {
     return newComment;
   }
 
-  // async deleteComment(productId: number) {
-  //   const product = await this.findOne(productId);
-  //   console.log(product);
-  // }
+  async deleteComment(productId: number) {
+    const product = await this.findOne(productId);
+    console.log(product);
+  }
 
   async findAllByProductId(productId: number) {
     await this.findOne(productId);

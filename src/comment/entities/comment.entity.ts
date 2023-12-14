@@ -11,4 +11,7 @@ export class Comment {
 
   @ManyToOne(() => Product, (product) => product.comments)
   product: Product;
+
+  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 }
