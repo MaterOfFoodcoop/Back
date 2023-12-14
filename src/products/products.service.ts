@@ -22,11 +22,15 @@ export class ProductsService {
     private productsRepository: Repository<Product>,
   ) {
     this.awsS3 = new AWS.S3({
-      accessKeyId: process.env.AWS_BUCKET_ACCESS_KEY,
-      secretAccessKey: process.env.AWS_BUCKET_SECRET_KEY,
-      region: process.env.S3_REGION,
+      accessKeyId: 'AKIAZ6ZZDMHLMXYIEZM5',
+      secretAccessKey: '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',
+      region: 'ap-northeast-2',
+      // accessKeyId: process.env.AWS_BUCKET_ACCESS_KEY,
+      // secretAccessKey: process.env.AWS_BUCKET_SECRET_KEY,
+      // region: process.env.S3_REGION,
     });
-    this.S3_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
+    this.S3_BUCKET_NAME = 'coop-img-bucket';
+    // this.S3_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
   }
 
   async deleteFileFromS3(fileUrl: string): Promise<void> {
