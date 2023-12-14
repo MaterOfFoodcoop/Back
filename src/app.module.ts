@@ -3,6 +3,7 @@ import { DatabaseModule } from './database/database.module';
 import { ProductsModule } from './products/products.module';
 import { QnAModule } from './qna/qna.module';
 import { AuthModule } from './auth/auth.module';
+import { CommentModule } from './comment/comment.module';
 
 // ThrottlerModule.forRoot([
 //   {
@@ -13,6 +14,12 @@ import { AuthModule } from './auth/auth.module';
 // ]),
 
 @Module({
-  imports: [DatabaseModule, ProductsModule, QnAModule, AuthModule],
+  imports: [
+    DatabaseModule,
+    ProductsModule,
+    QnAModule,
+    AuthModule,
+    CommentModule,
+  ],
 })
 export class AppModule {}

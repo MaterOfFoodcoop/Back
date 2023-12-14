@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Comment } from '../../comment/entities/comment.entity';
 
 export enum ProductCategory {
   Chip = '과자',
@@ -33,4 +34,7 @@ export class Product {
 
   @Column({ nullable: true, default: '기본 이미지 URL' })
   imgUrl: string;
+
+  @OneToMany(() => Comment, (comment) => comment.product)
+  comments: Comment[];
 }
