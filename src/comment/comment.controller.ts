@@ -19,7 +19,7 @@ export class CommentController {
   }
 
   @Delete()
-  async deleteComment(@Param('productId') productId: number) {
-    return await this.commentService.deleteComment(productId);
+  async deleteComment(@Param('commentId') commentId: number) {
+    return await this.commentService.deleteComment(commentId);
   }
 }

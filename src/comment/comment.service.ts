@@ -19,7 +19,6 @@ export class CommentService {
     const product = await this.productsRepository.findOne({
       where: { productId: productId },
     });
-
     if (!product) {
       throw new NotFoundException(
         `해당 id(${productId}) 를 가진 상품이 존재하지 않습니다.`,
@@ -49,9 +48,17 @@ export class CommentService {
     return newComment;
   }
 
-  async deleteComment(productId: number) {
-    const product = await this.findOne(productId);
-    console.log(product);
+  async deleteComment(commentId: number) {
+    const comment = await this.commentsRepository.findOne({
+      where: { commentId: commentId },
+    });
+
+    if (!comment) {
+      throw new NotFoundException(
+        `해당 id(${commentId})를 가진 댓글이 존재하지 않습니다.`,
+      );
+    }
+    await this.commentsRepository.delete(comment);
   }
 
   async findAllByProductId(productId: number) {
