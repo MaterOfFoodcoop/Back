@@ -8,7 +8,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @Get()
+  @Get(':productId')
   async findAllByProductId(@Param('productId') productId: number) {
     return await this.commentService.findAllByProductId(productId);
   }
@@ -18,7 +18,7 @@ export class CommentController {
     return await this.commentService.createComment(createCommentDto);
   }
 
-  @Delete()
+  @Delete(':commentId')
   async deleteComment(@Param('commentId') commentId: number) {
     return await this.commentService.deleteComment(commentId);
   }
