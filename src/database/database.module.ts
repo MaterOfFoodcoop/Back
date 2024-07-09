@@ -8,21 +8,19 @@ import { Question } from 'src/qna/entities/question.entity';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      // useFactory: async (configService: ConfigService) => ({
-      useFactory: async () => ({
+      useFactory: async (configService: ConfigService) => ({
         type: 'mysql',
-        // host: configService.get<string>('DATABASE_HOST'),
-        host: 'coop-backend-database.cjpevxxporen.ap-northeast-2.rds.amazonaws.com',
-        port: 3306,
-        // username: configService.get<string>('DATABASE_NAME'),
-        // password: configService.get<string>('DATABASE_PASSWORD'),
-        // database: configService.get<string>('DATABASE_DB'),
-        username: 'admin',
-        password: 'qlalfqjsgh1',
-        database: 'coop',
+        host: configService.get<string>('DATABASE_HOST'),
+        port: 32696,
+        username: configService.get<string>('DATABASE_USERNAME'),
+        password: configService.get<string>('DATABASE_PASSWORD'),
+        database: configService.get<string>('DATABASE_NAME'),
         entities: [Product, Question, Answer, Comment],
         synchronize: true,
       }),

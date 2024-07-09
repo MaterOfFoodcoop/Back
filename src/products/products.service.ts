@@ -22,14 +22,14 @@ export class ProductsService {
     private productsRepository: Repository<Product>,
   ) {
     this.awsS3 = new AWS.S3({
-      accessKeyId: 'AKIAZ6ZZDMHLMXYIEZM5',
-      secretAccessKey: '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',
+      accessKeyId: 'AKIAT5GEE2S3M6GZSNVS',
+      secretAccessKey: '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',
       region: 'ap-northeast-2',
       // accessKeyId: process.env.AWS_BUCKET_ACCESS_KEY,
       // secretAccessKey: process.env.AWS_BUCKET_SECRET_KEY,
       // region: process.env.S3_REGION,
     });
-    this.S3_BUCKET_NAME = 'coop-img-bucket';
+    this.S3_BUCKET_NAME = 'coop-portfolio';
     // this.S3_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
   }
 
@@ -89,7 +89,6 @@ export class ProductsService {
     product.productName = createProductDto.productName;
     product.productDetail = createProductDto.productDetail;
     product.productPrice = createProductDto.productPrice;
-    //아니 form데이타 인식도 못하냐;;
     product.isInStock = createProductDto.isInStock === 'true';
     // product.isInStock = createProductDto.isInStock;
     product.category = createProductDto.category;
@@ -164,7 +163,6 @@ export class ProductsService {
   }
 
   /**좋아요 */
-  // 일단 이렇게만 해둠;; 유저 로그인이 필요가 없긴 한데.. 대화가 필요할 듯
   async addLike(productId: number): Promise<Product> {
     const product = await this.findOne(productId);
     product.like++;
